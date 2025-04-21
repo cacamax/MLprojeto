@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento Não Aprovado</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 40px;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #f44336;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .btn {
+            background-color: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #7c3aed;
+        }
+        .error-icon {
+            font-size: 80px;
+            color: #f44336;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-icon">✗</div>
+        <h1>Pagamento Não Aprovado</h1>
+        <p>Infelizmente, seu pagamento não foi aprovado. Isso pode acontecer por diversos motivos, como problemas com o cartão ou insuficiência de fundos.</p>
+        <p>Por favor, tente novamente com outro método de pagamento ou entre em contato com seu banco para mais informações.</p>
+        <a href="/" class="btn">Voltar e Tentar Novamente</a>
+    </div>
+
+    <script>
+        // Redirecionar para a página principal após 10 segundos
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 10000);
+    </script>
+</body>
+</html>

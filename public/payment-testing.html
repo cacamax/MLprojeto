@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ferramentas de Teste - Mercado Pago</title>
+  <style>
+    :root {
+      --primary-color: #009ee3;
+      --primary-dark: #007eb5;
+      --secondary-color: #9c27b0;
+      --secondary-dark: #7b1fa2;
+      --success-color: #2e7d32;
+      --warning-color: #f9a825;
+      --error-color: #c62828;
+      --bg-color: #f5f5f5;
+      --card-bg: white;
+      --text-color: #333;
+      --text-light: #666;
+      --border-color: #ddd;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      background-color: var(--bg-color);
+      margin: 0;
+      padding: 20px;
+      color: var(--text-color);
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    header h1 {
+      color: var(--primary-color);
+      margin-bottom: 5px;
+    }
+    
+    header p {
+      color: var(--text-light);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .card h2 {
+      color: var(--secondary-color);
+      margin-top: 0;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .options {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 15px;
+    }
+    
+    .option-card {
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 15px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    
+    .option-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-color: var(--primary-color);
+    }
+    
+    .option-card h3 {
+      margin-top: 0;
+      color: var(--primary-dark);
+    }
+    
+    .option-card p {
+      margin-bottom: 0;
+      color: var(--text-light);
+    }
+    
+    .button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 15px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 10px;
+    }
+    
+    .button:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .button.secondary {
+      background-color: var(--secondary-color);
+    }
+    
+    .button.secondary:hover {
+      background-color: var(--secondary-dark);
+    }
+    
+    .button.warning {
+      background-color: var(--warning-color);
+    }
+    
+    .button.error {
+      background-color: var(--error-color);
+    }
+    
+    .message {
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+    
+    .success {
+      background-color: #e8f5e9;
+      color: var(--success-color);
+      border: 1px solid #c8e6c9;
+    }
+    
+    .warning {
+      background-color: #fff8e1;
+      color: var(--warning-color);
+      border: 1px solid #ffecb3;
+    }
+    
+    .error {
+      background-color: #ffebee;
+      color: var(--error-color);
+      border: 1px solid #ffcdd2;
+    }
+    
+    .info {
+      background-color: #e3f2fd;
+      color: var(--primary-dark);
+      border: 1px solid #bbdefb;
+    }
+    
+    .tool-section {
+      margin-bottom: 30px;
+    }
+    
+    .response-container {
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 15px;
+      margin-top: 15px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    
+    .form-row {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    textarea {
+      min-height: 100px;
+    }
+    
+    .buttons {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    
+    .flex {
+      display: flex;
+    }
+    
+    .flex-col {
+      flex-direction: column;
+    }
+    
+    .gap-4 {
+      gap: 16px;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-left: 8px;
+    }
+    
+    .status-badge.active {
+      background-color: #e8f5e9;
+      color: var(--success-color);
+    }
+    
+    .status-badge.inactive {
+      background-color: #ffebee;
+      color: var(--error-color);
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    th {
+      font-weight: 500;
+      color: var(--text-light);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Ferramentas de Teste - Mercado Pago</h1>
+      <p>Teste todos os aspectos da integração com o Mercado Pago, incluindo criação de preferências, redirecionamentos, webhooks e notificações</p>
+    </header>
+    
+    <div class="message info">
+      <strong>Dica:</strong> Utilize estas ferramentas para garantir que sua integração com o Mercado Pago esteja funcionando corretamente em desenvolvimento. Lembre-se de usar credenciais de teste em ambiente de desenvolvimento.
+    </div>
+    
+    <!-- Páginas de Checkout -->
+    <div class="card">
+      <h2>Páginas de Checkout</h2>
+      <div class="options">
+        <div class="option-card">
+          <h3>Checkout Pro (SDK V2)</h3>
+          <p>Implementação mais recente usando o SDK V2 do Mercado Pago com botão de checkout direto.</p>
+          <a href="/mercadopago-pro.html?lottery=megasena" class="button">Testar Checkout</a>
+        </div>
+        
+        <div class="option-card">
+          <h3>Checkout Clássico</h3>
+          <p>Implementação com o script de checkout clássico para integração com Mercado Pago.</p>
+          <a href="/mercadopago.html?lottery=megasena" class="button">Testar Checkout</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Ferramentas de Webhook -->
+    <div class="card">
+      <h2>Teste de Webhooks</h2>
+      <p>Simule notificações do Mercado Pago para testar o processamento de pagamentos.</p>
+      
+      <div class="tool-section">
+        <h3>Simulações Rápidas</h3>
+        <div class="buttons">
+          <button id="simulate-approved" class="button">Simular Pagamento Aprovado</button>
+          <button id="simulate-rejected" class="button error">Simular Pagamento Rejeitado</button>
+          <button id="simulate-pending" class="button warning">Simular Pagamento Pendente</button>
+        </div>
+        
+        <div id="webhook-response" class="response-container" style="display: none;"></div>
+      </div>
+      
+      <div class="tool-section">
+        <h3>Simulação Personalizada</h3>
+        <form id="custom-webhook-form">
+          <div class="form-row">
+            <label for="payment-id">ID do Pagamento (opcional)</label>
+            <input type="text" id="payment-id" placeholder="TEST_12345678" value="TEST_123456789">
+          </div>
+          
+          <div class="form-row">
+            <label for="payment-status">Status do Pagamento</label>
+            <select id="payment-status">
+              <option value="approved">Aprovado (approved)</option>
+              <option value="rejected">Rejeitado (rejected)</option>
+              <option value="pending">Pendente (pending)</option>
+              <option value="in_process">Em Processamento (in_process)</option>
+              <option value="refunded">Reembolsado (refunded)</option>
+            </select>
+          </div>
+          
+          <div class="form-row">
+            <label for="payment-amount">Valor (R$)</label>
+            <input type="number" id="payment-amount" value="1.00" step="0.01" min="0.01">
+          </div>
+          
+          <div class="form-row">
+            <label for="payment-description">Descrição</label>
+            <input type="text" id="payment-description" value="Modo Avançado de IA - Loteria">
+          </div>
+          
+          <div class="buttons">
+            <button type="submit" class="button">Enviar Notificação Personalizada</button>
+          </div>
+        </form>
+        
+        <div id="custom-webhook-response" class="response-container" style="display: none;"></div>
+      </div>
+    </div>
+    
+    <!-- Configurações e Status -->
+    <div class="card">
+      <h2>Configurações e Status</h2>
+      
+      <div class="tool-section">
+        <h3>Credenciais</h3>
+        <table>
+          <tr>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Status</th>
+          </tr>
+          <tr>
+            <td>ACCESS TOKEN</td>
+            <td>APP_USR-8148...7b68-2318017672</td>
+            <td><span class="status-badge active">Produção</span></td>
+          </tr>
+          <tr>
+            <td>PUBLIC KEY</td>
+            <td>APP_USR-d72d60c2-6088-4429-b87f-141dae6d222c</td>
+            <td><span class="status-badge active">Produção</span></td>
+          </tr>
+          <tr>
+            <td>Webhook URL</td>
+            <td id="webhook-url">Carregando...</td>
+            <td id="webhook-status"><span class="status-badge inactive">Verificando...</span></td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="buttons">
+        <button id="test-config" class="button">Verificar Configuração</button>
+        <button id="clear-local-storage" class="button error">Limpar Cache Local</button>
+      </div>
+      
+      <div id="config-response" class="response-container" style="display: none;"></div>
+    </div>
+  </div>
+  
+  <script>
+    // Elementos DOM
+    const webhookResponse = document.getElementById('webhook-response');
+    const customWebhookResponse = document.getElementById('custom-webhook-response');
+    const configResponse = document.getElementById('config-response');
+    const webhookUrl = document.getElementById('webhook-url');
+    const webhookStatus = document.getElementById('webhook-status');
+    
+    // Definir URL do webhook
+    const baseUrl = window.location.origin;
+    webhookUrl.textContent = `${baseUrl}/api/mercadopago/webhook`;
+    
+    // Função para simular webhook
+    async function simulateWebhook(status, customData = {}) {
+      try {
+        webhookResponse.style.display = 'block';
+        webhookResponse.textContent = 'Enviando notificação...';
+        
+        // Gerar ID de pagamento aleatório se não for fornecido
+        const paymentId = customData.paymentId || `TEST_${Date.now()}`;
+        
+        // Criar payload do webhook
+        const payload = {
+          action: "payment.updated",
+          api_version: "v1",
+          data: {
+            id: paymentId
+          },
+          date_created: new Date().toISOString(),
+          id: Date.now(),
+          live_mode: false,
+          type: "payment",
+          user_id: "2318017672"
+        };
+        
+        // Criar dados mockados do pagamento
+        const mockPaymentData = {
+          id: paymentId,
+          status: status,
+          status_detail: status === 'approved' ? 'accredited' : 
+                          status === 'rejected' ? 'cc_rejected_other_reason' : 
+                          'pending_contingency',
+          date_approved: status === 'approved' ? new Date().toISOString() : null,
+          date_created: new Date().toISOString(),
+          payment_method_id: "pix",
+          payment_type_id: "bank_transfer",
+          transaction_amount: customData.amount || 1,
+          currency_id: "BRL",
+          external_reference: customData.reference || "lottery_megasena_test",
+          description: customData.description || "Modo Avançado de IA - Loteria",
+          payer: {
+            email: "test@example.com",
+            identification: {
+              type: "CPF",
+              number: "12345678909"
+            }
+          }
+        };
+        
+        // Injetar os dados mockados no localStorage para que o endpoint possa acessá-los
+        localStorage.setItem('mockPaymentData', JSON.stringify(mockPaymentData));
+        
+        // Chamar o endpoint de webhook
+        const response = await fetch(`${baseUrl}/api/mercadopago/webhook`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'User-Agent': 'MercadoPago/1.0',
+            'X-Webhook-Source': 'test-tool',
+            'X-Mock-Payment-Data': 'true'
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        const responseText = await response.text();
+        let formattedResponse;
+        
+        try {
+          const jsonResponse = JSON.parse(responseText);
+          formattedResponse = JSON.stringify(jsonResponse, null, 2);
+        } catch (e) {
+          formattedResponse = responseText;
+        }
+        
+        webhookResponse.textContent = `Status: ${response.status}\n\n${formattedResponse}`;
+        
+        return response.ok;
+      } catch (error) {
+        webhookResponse.textContent = `Erro: ${error.message}`;
+        return false;
+      }
+    }
+    
+    // Event listeners para simulações rápidas
+    document.getElementById('simulate-approved').addEventListener('click', () => {
+      simulateWebhook('approved');
+    });
+    
+    document.getElementById('simulate-rejected').addEventListener('click', () => {
+      simulateWebhook('rejected');
+    });
+    
+    document.getElementById('simulate-pending').addEventListener('click', () => {
+      simulateWebhook('pending');
+    });
+    
+    // Event listener para simulação personalizada
+    document.getElementById('custom-webhook-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      customWebhookResponse.style.display = 'block';
+      customWebhookResponse.textContent = 'Enviando notificação personalizada...';
+      
+      const paymentId = document.getElementById('payment-id').value || `TEST_${Date.now()}`;
+      const status = document.getElementById('payment-status').value;
+      const amount = parseFloat(document.getElementById('payment-amount').value);
+      const description = document.getElementById('payment-description').value;
+      
+      try {
+        const result = await simulateWebhook(status, {
+          paymentId,
+          amount,
+          description,
+          reference: `lottery_test_${Date.now()}`
+        });
+        
+        customWebhookResponse.textContent = result 
+          ? 'Notificação enviada com sucesso!' 
+          : 'Erro ao enviar notificação. Verifique o console.';
+      } catch (error) {
+        customWebhookResponse.textContent = `Erro: ${error.message}`;
+      }
+    });
+    
+    // Verificar configuração
+    document.getElementById('test-config').addEventListener('click', async () => {
+      configResponse.style.display = 'block';
+      configResponse.textContent = 'Verificando configuração...';
+      
+      try {
+        // Verificar se o endpoint de webhook está acessível
+        const response = await fetch(`${baseUrl}/api/mercadopago/webhook`, {
+          method: 'GET'
+        });
+        
+        if (response.status === 405) {
+          // Status 405 (Method Not Allowed) é esperado, pois o endpoint aceita apenas POST
+          webhookStatus.innerHTML = '<span class="status-badge active">Disponível</span>';
+        } else {
+          webhookStatus.innerHTML = '<span class="status-badge inactive">Indisponível</span>';
+        }
+        
+        // Coletar informações de configuração
+        const config = {
+          baseUrl,
+          webhookUrl: `${baseUrl}/api/mercadopago/webhook`,
+          localStorageAccess: typeof localStorage !== 'undefined',
+          advancedModeEnabled: localStorage.getItem('showAdvancedCombinations') === 'true',
+          serverRunning: true,
+          userAgent: navigator.userAgent
+        };
+        
+        configResponse.textContent = JSON.stringify(config, null, 2);
+      } catch (error) {
+        configResponse.textContent = `Erro ao verificar configuração: ${error.message}`;
+        webhookStatus.innerHTML = '<span class="status-badge inactive">Erro</span>';
+      }
+    });
+    
+    // Limpar localStorage
+    document.getElementById('clear-local-storage').addEventListener('click', () => {
+      localStorage.removeItem('showAdvancedCombinations');
+      localStorage.removeItem('mockPaymentData');
+      
+      configResponse.style.display = 'block';
+      configResponse.textContent = 'Cache local limpo com sucesso!';
+    });
+    
+    // Verificar configuração inicial
+    document.getElementById('test-config').click();
+  </script>
+</body>
+</html>

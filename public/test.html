@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Mercado Pago</title>
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+</head>
+<body>
+    <div style="max-width: 400px; margin: 40px auto; padding: 20px; text-align: center;">
+        <h1>Teste de Pagamento</h1>
+        <button id="checkout-btn" style="
+            background: #009ee3;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        ">
+            Pagar R$ 1,00
+        </button>
+    </div>
+
+    <script>
+        const mp = new MercadoPago('APP_USR-d72d60c2-6088-4429-b87f-141dae6d222c');
+
+        document.getElementById('checkout-btn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:3001/create-preference', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erro ao criar preferência');
+                }
+
+                const data = await response.json();
+                window.location.href = data.init_point;
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao processar pagamento. Tente novamente.');
+            }
+        });
+    </script>
+</body>
+</html>

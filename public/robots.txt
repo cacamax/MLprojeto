@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dazzling-golick2-wlwj6.dev-2.tempolabs.ai/sitemap.xml

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste API Mercado Pago</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .container {
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #009ee3;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    button:hover {
+      background-color: #008dcb;
+    }
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+    }
+    .success {
+      color: #28a745;
+    }
+    .error {
+      color: #dc3545;
+    }
+    pre {
+      background-color: #f8f9fa;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Teste de API - Mercado Pago</h1>
+  
+  <div class="container">
+    <h2>Detalhes do Pagamento</h2>
+    <div>
+      <p><strong>Produto:</strong> Acesso Premium ao Gerador de Loteria</p>
+      <p><strong>Valor:</strong> R$ 1,00</p>
+      <p><strong>Credenciais:</strong> APP_USR-79df32c0-dbdf-4313-b924-c6f7e7d068a5</p>
+    </div>
+    
+    <div>
+      <button id="test-button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+          <line x1="1" y1="10" x2="23" y2="10"></line>
+        </svg>
+        Testar API
+      </button>
+    </div>
+    
+    <div id="result" class="result">
+      <p>Clique no botão para testar a API...</p>
+    </div>
+  </div>
+  
+  <div class="container">
+    <h2>Informações Técnicas</h2>
+    <p><strong>Endpoint:</strong> http://localhost:3000/api/mercadopago/create-preference</p>
+    <p><strong>Método:</strong> POST</p>
+    <p><strong>Conteúdo:</strong> application/json</p>
+    <pre id="request-data"></pre>
+  </div>
+
+  <script>
+    document.getElementById('test-button').addEventListener('click', async function() {
+      const button = this;
+      const resultDiv = document.getElementById('result');
+      const requestDataDiv = document.getElementById('request-data');
+      
+      // Desabilitar botão e mostrar carregamento
+      button.disabled = true;
+      button.innerHTML = '<div class="loading"></div> Processando...';
+      resultDiv.innerHTML = '<p>Testando API...</p>';
+      
+      try {
+        // Dados do pagamento
+        const paymentData = {
+          title: "Acesso Premium ao Gerador de Loteria",
+          price: 1.00,
+          description: "Acesso ao gerador avançado de combinações para Mega-Sena",
+          lotteryType: "megasena",
+          quantity: 1,
+          buyerEmail: "cliente@exemplo.com"
+        };
+        
+        // Mostrar dados da requisição
+        requestDataDiv.textContent = JSON.stringify(paymentData, null, 2);
+        
+        // Enviar requisição para criar preferência
+        const response = await fetch('http://localhost:3000/api/mercadopago/create-preference', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(paymentData),
+        });
+        
+        // Verificar resposta
+        if (!response.ok) {
+          let errorMessage = `Erro ${response.status}: ${response.statusText}`;
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+          } catch (e) {
+            const errorText = await response.text();
+            errorMessage = errorText || errorMessage;
+          }
+          throw new Error(errorMessage);
+        }
+        
+        // Processar dados da preferência
+        const data = await response.json();
+        console.log('Preferência criada:', data);
+        
+        // Mostrar resultado
+        let html = '<p class="success">✓ API funcionando corretamente!</p>';
+        html += `<p><strong>ID:</strong> ${data.id}</p>`;
+        html += `<p><strong>Link de Pagamento:</strong> <a href="${data.init_point}" target="_blank">Abrir Checkout do Mercado Pago</a></p>`;
+        
+        if (data.external_reference) {
+          html += `<p><strong>Referência Externa:</strong> ${data.external_reference}</p>`;
+        }
+        
+        resultDiv.innerHTML = html;
+        
+      } catch (error) {
+        console.error('Erro:', error);
+        
+        // Mostrar erro
+        resultDiv.innerHTML = `<p class="error">✗ Erro ao testar API</p><p>${error.message}</p>`;
+      } finally {
+        // Restaurar botão
+        button.disabled = false;
+        button.innerHTML = `
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+            <line x1="1" y1="10" x2="23" y2="10"></line>
+          </svg>
+          Testar API
+        `;
+      }
+    });
+  </script>
+</body>
+</html>

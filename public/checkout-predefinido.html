@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout Pro - Modelo Predefinido</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    
+    .container {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+    
+    h1 {
+      color: #009ee3;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+    
+    .product-info {
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    
+    .product-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    
+    .product-price {
+      font-size: 24px;
+      font-weight: bold;
+      color: #009ee3;
+    }
+    
+    .message {
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 4px;
+      display: none;
+    }
+    
+    .error {
+      background-color: #ffebee;
+      color: #c62828;
+      display: block;
+    }
+    
+    .success {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      display: block;
+    }
+    
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #009ee3;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 2s linear infinite;
+      margin: 20px auto;
+      display: none;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Estilos para o botão de checkout (será substituído pelo botão do MP) */
+    .checkout-button {
+      background-color: #009ee3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 12px 20px;
+      font-size: 16px;
+      width: 100%;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .checkout-button:hover {
+      background-color: #008fcf;
+    }
+    
+    #checkout-button-container {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Modo Avançado de IA</h1>
+    
+    <div class="product-info">
+      <div class="product-title">Acesso ao gerador avançado de combinações</div>
+      <div class="product-price">R$ 1,00</div>
+      <p>Utilize algoritmos de IA para gerar combinações mais inteligentes e com maior probabilidade de acerto.</p>
+    </div>
+    
+    <div id="status-message" class="message"></div>
+    <div id="loader" class="loader"></div>
+    
+    <div id="checkout-button-container">
+      <!-- O botão do Mercado Pago será inserido aqui -->
+    </div>
+  </div>
+  
+  <script>
+    // Configuração da página
+    const urlParams = new URLSearchParams(window.location.search);
+    const lotteryType = urlParams.get('lottery') || 'megasena';
+    const statusMessage = document.getElementById('status-message');
+    const loader = document.getElementById('loader');
+    const checkoutContainer = document.getElementById('checkout-button-container');
+    
+    // Verificar se já possui acesso
+    if (localStorage.getItem('showAdvancedCombinations') === 'true') {
+      statusMessage.textContent = 'Você já possui acesso ao modo avançado!';
+      statusMessage.className = 'message success';
+      
+      const button = document.createElement('button');
+      button.className = 'checkout-button';
+      button.textContent = 'Ir para o gerador avançado';
+      button.addEventListener('click', () => {
+        window.location.href = `/${lotteryType}`;
+      });
+      
+      checkoutContainer.appendChild(button);
+    } else {
+      // Verificar status da URL (retorno do pagamento)
+      const status = urlParams.get('status');
+      const paymentId = urlParams.get('payment_id');
+      
+      if (status === 'approved' && paymentId) {
+        // Pagamento aprovado
+        localStorage.setItem('showAdvancedCombinations', 'true');
+        statusMessage.textContent = 'Pagamento aprovado! Seu acesso foi ativado com sucesso.';
+        statusMessage.className = 'message success';
+        
+        const button = document.createElement('button');
+        button.className = 'checkout-button';
+        button.textContent = 'Ir para o gerador avançado';
+        button.addEventListener('click', () => {
+          window.location.href = `/${lotteryType}`;
+        });
+        
+        checkoutContainer.appendChild(button);
+      } else if (status === 'failure' || status === 'rejected') {
+        // Pagamento rejeitado
+        statusMessage.textContent = 'Pagamento não aprovado. Por favor, tente novamente.';
+        statusMessage.className = 'message error';
+        
+        // Iniciar processo de checkout
+        initCheckout();
+      } else {
+        // Pagamento inicial ou pendente
+        initCheckout();
+      }
+    }
+    
+    // Função para iniciar o checkout
+    async function initCheckout() {
+      try {
+        loader.style.display = 'block';
+        checkoutContainer.innerHTML = '';
+        
+        // Criar preferência no servidor
+        const response = await fetch('/api/mercadopago/create-preference', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: 'Modo Avançado de IA - Loteria',
+            price: 1.00,
+            description: `Acesso ao gerador avançado de combinações para ${lotteryType}`,
+            lotteryType: lotteryType
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Erro ao criar preferência: ${response.status}`);
+        }
+        
+        const preference = await response.json();
+        
+        if (!preference || !preference.id) {
+          throw new Error('ID da preferência não encontrado');
+        }
+        
+        // Inserir botão de checkout do Mercado Pago
+        const script = document.createElement('script');
+        script.src = "https://www.mercadopago.com.br/integrations/v1/web-payment-checkout.js";
+        script.setAttribute('data-preference-id', preference.id);
+        script.setAttribute('data-button-label', 'Pagar agora');
+        
+        checkoutContainer.appendChild(script);
+        loader.style.display = 'none';
+      } catch (error) {
+        console.error('Erro:', error);
+        statusMessage.textContent = `Erro ao iniciar pagamento: ${error.message}`;
+        statusMessage.className = 'message error';
+        loader.style.display = 'none';
+        
+        // Botão para tentar novamente
+        const retryButton = document.createElement('button');
+        retryButton.className = 'checkout-button';
+        retryButton.textContent = 'Tentar novamente';
+        retryButton.addEventListener('click', initCheckout);
+        
+        checkoutContainer.innerHTML = '';
+        checkoutContainer.appendChild(retryButton);
+      }
+    }
+  </script>
+</body>
+</html>

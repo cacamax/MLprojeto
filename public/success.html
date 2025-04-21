@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento Aprovado</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 40px;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #4caf50;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .btn {
+            background-color: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #7c3aed;
+        }
+        .success-icon {
+            font-size: 80px;
+            color: #4caf50;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon">✓</div>
+        <h1>Pagamento Aprovado!</h1>
+        <p>Seu pagamento foi processado com sucesso. Agora você tem acesso ao gerador avançado de combinações para loterias!</p>
+        <p>Você pode gerar combinações otimizadas com base em estatísticas reais e padrões inteligentes.</p>
+        <a href="/" class="btn">Voltar para o Gerador</a>
+    </div>
+
+    <script>
+        // Redirecionar para a página principal após 5 segundos
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 5000);
+    </script>
+</body>
+</html>

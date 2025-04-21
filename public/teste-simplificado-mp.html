@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste Simplificado Mercado Pago</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #009ee3;
+      margin-bottom: 20px;
+    }
+    button {
+      background-color: #009ee3;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #007eb5;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+    }
+    .success { color: green; }
+    .error { color: red; }
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top-color: #009ee3;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Teste Simplificado - Mercado Pago</h1>
+  
+  <div class="container">
+    <h2>Teste exatamente como no exemplo que funciona</h2>
+    <p>Este teste usa exatamente o mesmo código do exemplo que sabemos que funciona.</p>
+    
+    <button id="payment-button">Pagar R$ 1,00</button>
+    
+    <div id="result" class="result">
+      <p>Clique no botão para testar o pagamento...</p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('payment-button').addEventListener('click', async function() {
+      const button = this;
+      const resultDiv = document.getElementById('result');
+      
+      // Desativar o botão e mostrar loading
+      button.disabled = true;
+      button.innerHTML = '<div class="loading"></div> Processando...';
+      resultDiv.innerHTML = '<p>Criando preferência de pagamento...</p>';
+      
+      try {
+        // Dados exatamente iguais ao exemplo que funciona
+        const paymentData = {
+          title: "Acesso Premium ao Gerador de Loteria",
+          price: 1.00,
+          description: "Acesso ao gerador avançado de combinações para Mega-Sena",
+          lotteryType: "megasena",
+          quantity: 1,
+          buyerEmail: "cliente@exemplo.com"
+        };
+        
+        // Enviar requisição para criar preferência - URL completa como no exemplo
+        const response = await fetch('http://localhost:3000/api/mercadopago/create-preference', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(paymentData),
+        });
+        
+        // Verificar resposta
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || `Erro ${response.status}`);
+        }
+        
+        // Processar dados da preferência
+        const data = await response.json();
+        console.log('Preferência criada:', data);
+        
+        // Mostrar resultado
+        let html = '<p class="success">✓ Preferência criada com sucesso!</p>';
+        html += `<p><strong>ID:</strong> ${data.id}</p>`;
+        html += `<p><strong>Link de Pagamento:</strong> <a href="${data.init_point}" target="_blank">Abrir Checkout</a></p>`;
+        
+        if (data.external_reference) {
+          html += `<p><strong>Referência Externa:</strong> ${data.external_reference}</p>`;
+        }
+        
+        resultDiv.innerHTML = html;
+        
+        // Restaurar botão
+        button.disabled = false;
+        button.innerHTML = 'Pagar R$ 1,00';
+        
+        // Opcionalmente redirecionar
+        setTimeout(() => {
+          if (confirm('Redirecionar para o checkout do Mercado Pago?')) {
+            window.location.href = data.init_point;
+          }
+        }, 500);
+        
+      } catch (error) {
+        console.error('Erro:', error);
+        
+        // Mostrar erro
+        resultDiv.innerHTML = `<p class="error">✗ Erro ao processar pagamento</p><p>${error.message}</p>`;
+        
+        // Restaurar botão
+        button.disabled = false;
+        button.innerHTML = 'Pagar R$ 1,00';
+      }
+    });
+  </script>
+</body>
+</html>

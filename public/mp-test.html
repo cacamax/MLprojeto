@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste Simples Mercado Pago</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .container {
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #009ee3;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #007eb5;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+      min-height: 100px;
+    }
+    .success {
+      color: green;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Teste Simples da API do Mercado Pago</h1>
+    
+    <div>
+      <h2>Criar Preferência</h2>
+      <button id="create-preference">Criar Preferência de Teste (R$ 1,00)</button>
+    </div>
+    
+    <div id="result">
+      <p>Os resultados aparecerão aqui...</p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('create-preference').addEventListener('click', async () => {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '<p>Enviando requisição...</p>';
+      
+      try {
+        const response = await fetch('http://localhost:3000/api/mercadopago/create-preference', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: 'Modo Avançado de IA - Loteria',
+            price: 1.00,
+            description: 'Acesso ao gerador avançado de combinações',
+            lotteryType: 'megasena',
+            quantity: 1,
+            buyerEmail: 'teste@exemplo.com'
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Erro ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        let html = '<h3 class="success">Preferência criada com sucesso!</h3>';
+        html += `<p><strong>ID:</strong> ${data.id}</p>`;
+        html += `<p><strong>Link de Pagamento:</strong> <a href="${data.init_point}" target="_blank">Abrir Checkout</a></p>`;
+        
+        if (data.external_reference) {
+          html += `<p><strong>Referência Externa:</strong> ${data.external_reference}</p>`;
+        }
+        
+        resultDiv.innerHTML = html;
+      } catch (error) {
+        resultDiv.innerHTML = `<h3 class="error">Erro!</h3><p>${error.message}</p>`;
+      }
+    });
+  </script>
+</body>
+</html>

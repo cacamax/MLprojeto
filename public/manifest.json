@@ -1,0 +1,26 @@
+{
+  "name": "Gerador de Combinações para Loterias com IA",
+  "short_name": "Loterias IA",
+  "description": "Gerador de combinações inteligentes para Mega Sena, Quina, Lotofácil, Timemania e Dupla Sena com Inteligência Artificial avançada",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#9C27B0",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
